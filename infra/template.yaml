@@ -1,0 +1,53 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Transform: AWS::Serverless-2016-10-31
+Description: >
+  RAG question-answering endpoint. API Gateway (HTTP API) -> Lambda -> S3.
+  The Lambda retrieves context from an embedding index in S3 and calls the
+  Gemini API for embeddings and generation. Stays within the AWS free tier.
+
+Parameters:
+  GeminiApiKey:
+    Type: String
+    NoEcho: true
+    Description: Google Gemini API key (passed to the Lambda as an env var).
+  IndexBucketName:
+    Type: String
+    Description: Globally unique S3 bucket name for the embedding index.
+
+Resources:
+  IndexBucket:
+    Type: AWS::S3::Bucket
+    Properties:
+      BucketName: !Ref IndexBucketName
+
+  RagFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: ../app/
+      Handler: handler.handler
+      Runtime: python3.12
+      Timeout: 30
+      MemorySize: 256
+      Environment:
+        Variables:
+          GEMINI_API_KEY: !Ref GeminiApiKey
+          INDEX_BUCKET: !Ref IndexBucketName
+          INDEX_KEY: index.json
+          TOP_K: '4'
+      Policies:
+        - S3ReadPolicy:
+            BucketName: !Ref IndexBucketName
+      Events:
+        Ask:
+          Type: HttpApi
+          Properties:
+            Path: /ask
+            Method: post
+
+Outputs:
+  ApiUrl:
+    Description: POST your question here as {"question": "..."}
+    Value: !Sub "https://${ServerlessHttpApi}.execute-api.${AWS::Region}.amazonaws.com/ask"
+  BucketName:
+    Description: Upload index.json here after deploy
+    Value: !Ref IndexBucketName

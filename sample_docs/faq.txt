@@ -1,0 +1,21 @@
+Q: What industries does Pro-Tech serve?
+A: Water and wastewater treatment, manufacturing, food and beverage, and energy.
+
+Q: Which PLC brands do you work with?
+A: Primarily Allen-Bradley (Rockwell) and Siemens, plus other platforms on request.
+
+Q: Do you offer remote monitoring?
+A: Yes. Pro-Tech provides remote SCADA monitoring and support so issues can be
+diagnosed without an on-site visit.
+
+Q: How does a typical project start?
+A: With a site assessment to understand the existing equipment and the goal,
+then a design proposal and quote.
+
+Q: Do you support legacy system upgrades?
+A: Yes. Many projects involve modernizing older control systems while keeping
+the process running with minimal downtime.
+
+Q: How can I get a quote?
+A: Contact the team with a short description of the site and the problem, and
+an engineer will follow up to scope the work.

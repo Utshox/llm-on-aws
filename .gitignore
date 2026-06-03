@@ -1,0 +1,18 @@
+# secrets
+.env
+
+# build artifacts
+build/
+*.zip
+
+# generated index (rebuild with ingest/build_index.py)
+index.json
+
+# python
+__pycache__/
+*.pyc
+.venv/
+venv/
+
+# sam
+.aws-sam/

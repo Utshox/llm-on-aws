@@ -1,0 +1,14 @@
+Pro-Tech Systems Group is a B2B industrial automation company. It designs and
+integrates SCADA systems, PLC programming, and control panels for water
+treatment, manufacturing, and energy clients. The company serves clients across
+the United States and provides remote monitoring, system integration, and
+ongoing technical support.
+
+Core services include SCADA development, HMI design, PLC configuration,
+industrial networking, and bulk water management systems. The team works with
+Allen-Bradley, Siemens, and other major automation platforms.
+
+Customers contact Pro-Tech for new control-system builds, upgrades to legacy
+systems, and emergency support. Typical projects start with a site assessment,
+followed by design, build, factory acceptance testing, installation, and
+commissioning.

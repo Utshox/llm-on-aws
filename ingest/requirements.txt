@@ -1,0 +1,4 @@
+# Only needed to run the local ingest step with --upload.
+# The Lambda handler itself needs no third-party packages (boto3 ships in the
+# Lambda runtime; everything else is the standard library).
+boto3>=1.34
