@@ -33,6 +33,20 @@ flowchart LR
   (`gemini-2.5-flash`), called over plain HTTPS so the Lambda has no
   third-party dependencies to package.
 
+## Live demo
+
+Deployed and tested on AWS (Lambda + API Gateway + S3, region `eu-north-1`).
+
+A grounded answer pulled from the knowledge base:
+
+![Grounded answer](screenshots/demo-answer.png)
+
+And the same endpoint declining a question the documents do not cover, instead
+of making something up. The retrieval-plus-grounding design is what keeps it
+honest:
+
+![Refuses out-of-scope question](screenshots/demo-grounding.png)
+
 ## What this demonstrates
 
 | Area | Where |
