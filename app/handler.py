@@ -136,6 +136,6 @@ def handler(event, context):
         {
             "question": question,
             "answer": answer,
-            "sources": [src for _, _, src in top_chunks if src],
+            "sources": list(dict.fromkeys(src for _, _, src in top_chunks if src)),
         },
     )
