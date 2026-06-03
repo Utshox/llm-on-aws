@@ -37,22 +37,29 @@ echo "4/6 Lambda ..."
 if aws lambda get-function --function-name "$FN" --region "$REGION" >/dev/null 2>&1; then
   aws lambda update-function-code --function-name "$FN" --region "$REGION" \
     --zip-file fileb://build/function.zip >/dev/null
+  aws lambda wait function-updated --function-name "$FN" --region "$REGION"
   aws lambda update-function-configuration --function-name "$FN" --region "$REGION" \
     --environment "Variables={GEMINI_API_KEY=$KEY,INDEX_BUCKET=$BUCKET,INDEX_KEY=index.json,TOP_K=4}" >/dev/null
+  aws lambda wait function-updated --function-name "$FN" --region "$REGION"
 else
   aws lambda create-function --function-name "$FN" --runtime python3.12 \
     --handler handler.handler --role "$ROLE_ARN" \
     --zip-file fileb://build/function.zip --timeout 30 --memory-size 256 \
     --environment "Variables={GEMINI_API_KEY=$KEY,INDEX_BUCKET=$BUCKET,INDEX_KEY=index.json,TOP_K=4}" \
     --region "$REGION" >/dev/null
+  aws lambda wait function-active --function-name "$FN" --region "$REGION"
 fi
 
 echo "5/6 HTTP API ..."
 LAMBDA_ARN="$(aws lambda get-function --function-name "$FN" --region "$REGION" --query Configuration.FunctionArn --output text)"
-API_ID="$(aws apigatewayv2 create-api --name "$API" --protocol-type HTTP --target "$LAMBDA_ARN" --region "$REGION" --query ApiId --output text)"
-aws lambda add-permission --function-name "$FN" --statement-id apigw-$API_ID \
-  --action lambda:InvokeFunction --principal apigateway.amazonaws.com \
-  --source-arn "arn:aws:execute-api:$REGION:$ACCOUNT:$API_ID/*/*" --region "$REGION" >/dev/null 2>&1 || true
+# reuse the API if it already exists, so re-runs don't pile up duplicates
+API_ID="$(aws apigatewayv2 get-apis --region "$REGION" --query "Items[?Name=='$API'].ApiId | [0]" --output text)"
+if [ -z "$API_ID" ] || [ "$API_ID" = "None" ]; then
+  API_ID="$(aws apigatewayv2 create-api --name "$API" --protocol-type HTTP --target "$LAMBDA_ARN" --region "$REGION" --query ApiId --output text)"
+  aws lambda add-permission --function-name "$FN" --statement-id apigw-$API_ID \
+    --action lambda:InvokeFunction --principal apigateway.amazonaws.com \
+    --source-arn "arn:aws:execute-api:$REGION:$ACCOUNT:$API_ID/*/*" --region "$REGION" >/dev/null 2>&1 || true
+fi
 ENDPOINT="$(aws apigatewayv2 get-api --api-id "$API_ID" --region "$REGION" --query ApiEndpoint --output text)"
 
 echo "6/6 build + upload index ..."

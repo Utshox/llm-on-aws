@@ -31,7 +31,7 @@ INDEX_KEY = os.environ.get("INDEX_KEY", "index.json")
 TOP_K = int(os.environ.get("TOP_K", "4"))
 
 GEMINI_BASE = "https://generativelanguage.googleapis.com/v1beta/models"
-EMBED_MODEL = "text-embedding-004"
+EMBED_MODEL = "gemini-embedding-001"
 CHAT_MODEL = "gemini-2.5-flash"
 
 s3 = boto3.client("s3")

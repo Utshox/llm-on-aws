@@ -21,7 +21,7 @@ import urllib.request
 import urllib.error
 
 GEMINI_API_KEY = os.environ.get("GEMINI_API_KEY")
-EMBED_MODEL = "text-embedding-004"
+EMBED_MODEL = "gemini-embedding-001"
 GEMINI_BASE = "https://generativelanguage.googleapis.com/v1beta/models"
 
 CHUNK_SIZE = 800      # characters
@@ -35,8 +35,12 @@ def embed(text):
     req = urllib.request.Request(
         url, data=data, headers={"Content-Type": "application/json"}, method="POST"
     )
-    with urllib.request.urlopen(req, timeout=30) as resp:
-        return json.loads(resp.read())["embedding"]["values"]
+    try:
+        with urllib.request.urlopen(req, timeout=30) as resp:
+            return json.loads(resp.read())["embedding"]["values"]
+    except urllib.error.HTTPError as e:
+        # surface the API's actual error instead of a bare HTTP code
+        raise SystemExit(f"Gemini embed failed ({e.code}): {e.read().decode()}") from e
 
 
 def chunk(text):
